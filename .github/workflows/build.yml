@@ -9,28 +9,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: espressif/idf:latest
     
     steps:
-      # 1. Checkout mã nguồn dự án
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
-      # 2. Cài đặt ESP-IDF (Dùng action chuẩn esp-cpp/setup-idf)
-      - name: Set up ESP-IDF
-        uses: esp-cpp/setup-idf@v2
-        with:
-          version: 'release/v6.1'
-          target: 'esp32s3'
-
-      # 3. Biên dịch dự án
       - name: Build Project
+        shell: bash
         run: |
+          . /opt/esp/idf/export.sh
           idf.py set-target esp32s3
           idf.py build
 
-      # 4. Tải các file binary firmware lên làm Artifacts
       - name: Upload Firmware Binaries
         uses: actions/upload-artifact@v4
         with:
