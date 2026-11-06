@@ -13,13 +13,13 @@ jobs:
       image: espressif/idf:latest
     
     steps:
-      # 1. Checkout mã nguồn dự án của bạn
+      # 1. Checkout mã nguồn dự án của bạn (nằm ở thư mục gốc)
       - name: Checkout custom repository
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
-      # 2. Clone repo gốc xiaozhi-esp32 đặt ngay ngoài thư mục gốc
+      # 2. Clone repo gốc xiaozhi-esp32 ra thư mục bên cạnh
       - name: Clone official xiaozhi-esp32
         uses: actions/checkout@v4
         with:
@@ -27,13 +27,11 @@ jobs:
           path: 'xiaozhi-esp32'
           submodules: 'recursive'
 
-      # 3. Biên dịch dự án (Đã thêm lệnh chuyển vào đúng thư mục my_xiaozhi_robot)
+      # 3. Biên dịch trực tiếp tại thư mục gốc
       - name: Build Project
         shell: bash
         run: |
           . /opt/esp/idf/export.sh
-          # Di chuyển vào thư mục chứa dự án ngoài của bạn
-          cd my_xiaozhi_robot
           idf.py set-target esp32s3
           idf.py build
 
@@ -43,6 +41,6 @@ jobs:
         with:
           name: esp32s3-firmware
           path: |
-            my_xiaozhi_robot/build/*.bin
-            my_xiaozhi_robot/build/bootloader/bootloader.bin
-            my_xiaozhi_robot/build/partition_table/partition-table.bin
+            build/*.bin
+            build/bootloader/bootloader.bin
+            build/partition_table/partition-table.bin
