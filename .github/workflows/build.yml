@@ -13,21 +13,21 @@ jobs:
       image: espressif/idf:latest
     
     steps:
-      # 1. Checkout mã nguồn dự án của bạn (nằm ở thư mục gốc)
+      # 1. Checkout repo riêng chứa mã nguồn tùy biến của bạn
       - name: Checkout custom repository
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
-      # 2. Clone repo gốc xiaozhi-esp32 ra thư mục bên cạnh
+      # 2. Clone repo gốc xiaozhi-esp32 ra thư mục song song bên ngoài (../xiaozhi-esp32)
       - name: Clone official xiaozhi-esp32
         uses: actions/checkout@v4
         with:
           repository: '78/xiaozhi-esp32'
-          path: 'xiaozhi-esp32'
+          path: '../xiaozhi-esp32'
           submodules: 'recursive'
 
-      # 3. Biên dịch trực tiếp tại thư mục gốc
+      # 3. Kích hoạt môi trường ESP-IDF và tiến hành build
       - name: Build Project
         shell: bash
         run: |
@@ -35,7 +35,7 @@ jobs:
           idf.py set-target esp32s3
           idf.py build
 
-      # 4. Tải file binary firmware lên làm Artifacts
+      # 4. Lưu lại các tệp binary sau khi build thành công
       - name: Upload Firmware Binaries
         uses: actions/upload-artifact@v4
         with:
