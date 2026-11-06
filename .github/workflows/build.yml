@@ -13,18 +13,31 @@ jobs:
       image: espressif/idf:latest
     
     steps:
-      - name: Checkout repository
+      # 1. Checkout mã nguồn dự án tùy biến của bạn
+      - name: Checkout custom repository
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
+      # 2. Clone thêm repo gốc xiaozhi-esp32 đặt ngay cạnh thư mục dự án
+      - name: Clone official xiaozhi-esp32
+        uses: actions/checkout@v4
+        with:
+          repository: '78/xiaozhi-esp32'
+          path: 'xiaozhi-esp32'
+          submodules: 'recursive'
+
+      # 3. Biên dịch dự án
       - name: Build Project
         shell: bash
         run: |
           . /opt/esp/idf/export.sh
+          # Nếu thư mục dự án của bạn nằm ở thư mục con, hãy cd vào đó trước khi build
+          # (Ví dụ: cd my_xiaozhi_robot nếu repo của bạn chứa thư mục con)
           idf.py set-target esp32s3
           idf.py build
 
+      # 4. Tải file binary firmware lên làm Artifacts
       - name: Upload Firmware Binaries
         uses: actions/upload-artifact@v4
         with:
